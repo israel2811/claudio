@@ -1,0 +1,95 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "claudio"
+version = "1.0.0"
+description = "Advanced audio analysis and blind source separation with multilingual transcription"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.9"
+authors = [
+    {name = "Claudio Team"}
+]
+keywords = [
+    "audio",
+    "signal-processing",
+    "blind-source-separation",
+    "speech-recognition",
+    "fft",
+    "ica",
+    "voice-separation",
+    "transcription",
+    "multilingual"
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Multimedia :: Sound/Audio :: Analysis",
+    "Topic :: Multimedia :: Sound/Audio :: Speech",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+    "numpy>=1.24.0",
+    "scipy>=1.10.0",
+    "librosa>=0.10.0",
+    "soundfile>=0.12.0",
+    "scikit-learn>=1.3.0",
+    "torch>=2.0.0",
+    "torchaudio>=2.0.0",
+    "openai-whisper>=20231117",
+    "faster-whisper>=0.10.0",
+    "speechbrain>=0.5.15",
+    "pyannote.audio>=3.1.0",
+    "transformers>=4.35.0",
+    "langdetect>=1.0.9",
+    "pydub>=0.25.0",
+    "click>=8.1.0",
+    "rich>=13.0.0",
+    "tqdm>=4.66.0",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "black>=23.0.0",
+    "isort>=5.12.0",
+    "mypy>=1.5.0",
+]
+gpu = [
+    "torch>=2.0.0+cu118",
+]
+
+[project.scripts]
+claudio = "claudio.cli.main:main"
+
+[project.urls]
+Homepage = "https://github.com/claudio-audio/claudio"
+Documentation = "https://github.com/claudio-audio/claudio#readme"
+Repository = "https://github.com/claudio-audio/claudio"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.black]
+line-length = 100
+target-version = ['py39', 'py310', 'py311', 'py312']
+
+[tool.isort]
+profile = "black"
+line_length = 100
+
+[tool.mypy]
+python_version = "3.9"
+warn_return_any = true
+warn_unused_configs = true
