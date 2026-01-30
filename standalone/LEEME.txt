@@ -1,0 +1,52 @@
+================================================================
+   CLAUDIO - Recuperacion Forense de Audio
+   Version Portable para Windows
+================================================================
+
+DESCRIPCION:
+   Claudio recupera voces que fueron atenuadas por debajo de
+   -35dB usando amplificacion por coherencia de fase.
+
+INSTALACION:
+   1. Descarga e instala Python desde:
+      https://www.python.org/downloads/
+
+      IMPORTANTE: Marca la casilla "Add Python to PATH"
+
+   2. Ejecuta INSTALAR_WINDOWS.bat
+
+   3. Listo!
+
+USO:
+   Opcion 1 - Interfaz Grafica:
+      Ejecuta: python claudio_portable.py --gui
+
+   Opcion 2 - Linea de Comandos:
+      python claudio_portable.py entrada.wav salida.wav
+
+   Opciones adicionales:
+      -i, --iterations N   Numero de iteraciones (default: 10)
+      --gui                Abrir interfaz grafica
+
+EJEMPLOS:
+   python claudio_portable.py audio.wav recuperado.wav
+   python claudio_portable.py -i 15 audio.mp3 salida.wav
+   python claudio_portable.py --gui
+
+COMO FUNCIONA:
+   1. Amplificacion por coherencia de fase
+      - Invierte la fase de la señal
+      - Re-invierte para alinear
+      - Suma para obtener interferencia constructiva
+
+   2. Realce espectral
+      - Amplifica frecuencias de voz (80-8000 Hz)
+      - Boost de formantes F1, F2, F3
+
+   3. Ganancia adaptativa
+      - Ajusta automaticamente el nivel final
+
+CONTACTO:
+   GitHub: github.com/israel2811/claudio
+
+================================================================
