@@ -623,6 +623,121 @@ def full_pipeline(
 
 
 @main.command()
+@click.argument("input_file", type=click.Path(exists=True))
+@click.option("-o", "--output", type=click.Path(), help="Output directory")
+@click.option("-t", "--threshold", type=float, default=-35.0, help="Detection threshold in dB")
+@click.option("--max-voices", type=int, default=30, help="Maximum voices to detect")
+@click.option("-l", "--languages", default="es,en,fr,de,ru,pt", help="Languages for transcription")
+@click.option("--aggressive/--no-aggressive", default=True, help="Aggressive recovery mode")
+@click.option("--transcribe/--no-transcribe", default=True, help="Transcribe recovered audio")
+def forensic(
+    input_file: str,
+    output: Optional[str],
+    threshold: float,
+    max_voices: int,
+    languages: str,
+    aggressive: bool,
+    transcribe: bool,
+):
+    """
+    Forensic audio recovery for attenuated voices.
+
+    Recovers voices attenuated below -35dB using phase coherence
+    amplification and iterative enhancement techniques.
+    """
+    print_banner()
+
+    from claudio.forensic.forensic_analyzer import ForensicAudioAnalyzer
+
+    input_path = Path(input_file)
+    output_dir = Path(output) if output else input_path.parent / f"{input_path.stem}_forensic"
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    lang_list = [l.strip() for l in languages.split(',')]
+
+    console.print(f"\n[bold]FORENSIC AUDIO RECOVERY[/bold]")
+    console.print(f"[bold]Input:[/bold] {input_file}")
+    console.print(f"[bold]Output:[/bold] {output_dir}")
+    console.print(f"[bold]Threshold:[/bold] {threshold} dB")
+    console.print(f"[bold]Max voices:[/bold] {max_voices}")
+    console.print(f"[bold]Languages:[/bold] {', '.join(lang_list)}\n")
+
+    with Progress(
+        SpinnerColumn(),
+        TextColumn("[progress.description]{task.description}"),
+        BarColumn(),
+        console=console,
+    ) as progress:
+        task = progress.add_task("Running forensic analysis...", total=None)
+
+        analyzer = ForensicAudioAnalyzer(
+            target_threshold_db=threshold,
+            max_voices=max_voices,
+            aggressive_recovery=aggressive,
+        )
+
+        result = analyzer.analyze(
+            str(input_file),
+            output_dir=str(output_dir),
+            transcribe=transcribe,
+            languages=lang_list,
+        )
+
+        progress.update(task, completed=True)
+
+    # Display results
+    console.print(f"\n[bold green]Forensic Recovery Complete![/bold green]\n")
+
+    console.print(Panel(
+        f"[cyan]Signal Improvement:[/cyan] +{result.signal_improvement_db:.1f} dB\n"
+        f"[cyan]Voice Segments:[/cyan] {len(result.detected_voice_segments)}\n"
+        f"[cyan]Distinct Voices:[/cyan] {result.n_voices_detected}\n"
+        f"[cyan]Total Voice Duration:[/cyan] {result.total_voice_duration:.2f}s\n"
+        f"[cyan]Noise Floor:[/cyan] {result.noise_floor_db:.1f} dB",
+        title="Recovery Results",
+        border_style="green",
+    ))
+
+    # Show segments
+    if result.detected_voice_segments:
+        table = Table(title="Detected Voice Segments")
+        table.add_column("ID", style="cyan")
+        table.add_column("Time", style="magenta")
+        table.add_column("Duration", style="green")
+        table.add_column("Level", style="yellow")
+        table.add_column("Voice", style="blue")
+
+        for seg in result.detected_voice_segments[:15]:
+            table.add_row(
+                str(seg.get('id', '-')),
+                f"{seg.get('start_time', 0):.2f}s",
+                f"{seg.get('duration', 0):.2f}s",
+                f"{seg.get('level_db', 0):.1f} dB",
+                seg.get('voice_type', '-'),
+            )
+
+        if len(result.detected_voice_segments) > 15:
+            table.add_row("...", "...", "...", "...", "...")
+
+        console.print(table)
+
+    # Show transcriptions
+    if result.transcriptions:
+        console.print("\n[bold]Transcriptions:[/bold]\n")
+        for seg_id, trans in list(result.transcriptions.items())[:5]:
+            console.print(f"[cyan]Segment {seg_id}[/cyan] [{trans.get('language', '?')}]:")
+            text = trans.get('text', '')
+            if len(text) > 100:
+                text = text[:100] + "..."
+            console.print(f"  {text}\n")
+
+    console.print(f"\n[bold]Output files saved to:[/bold] {output_dir}")
+
+    # Show processing log summary
+    console.print(f"\n[dim]Processing completed with {len(result.processing_log)} log entries[/dim]")
+
+
+@main.command()
 def info():
     """Show system information and available features."""
     print_banner()
