@@ -11,7 +11,10 @@ Configuración local de desarrollo integrado con servicios de Google Cloud, comb
 | **Google Antigravity** | IDE agéntico (fork de VS Code) | Gemini 3 Pro + Claude Opus 4.5 |
 | **Cowork** | Agente de escritorio (Claude Desktop) | Anthropic API / Vertex AI |
 | **Claude in Chrome** | Extensión de navegador | Chrome + Brave |
-| **Servidores MCP** | Protocolo de contexto compartido | Firebase, GCS, GitHub |
+| **Jules** | Agente de código asíncrono de Google | Google Cloud VM |
+| **OpenCode** | CLI alternativo multi-modelo | Via Antigravity OAuth |
+| **ChatGPT/Codex** | Capacidades adicionales de OpenAI | OpenAI API |
+| **Servidores MCP** | 40+ conectores compartidos | Firebase, Notion, Vercel, Zapier, etc. |
 
 ## Instalación rápida
 
@@ -58,15 +61,25 @@ claudio/
 ├── .mcp.json                         # Servidores MCP del proyecto
 ├── .gitignore
 ├── config/
-│   ├── .env.example                  # Template de variables
-│   └── .env                          # Variables locales (no se commitea)
+│   ├── .env.example                  # Template con TODAS las API keys
+│   ├── .env                          # Variables locales (no se commitea)
+│   └── mcp/                          # Templates de configuración MCP
+│       ├── claude-code-mcp.json      # MCP completo para Claude Code
+│       ├── claude-desktop-mcp.json   # MCP para Cowork
+│       ├── antigravity-mcp.json      # MCP para Antigravity
+│       └── opencode-mcp.json         # MCP para OpenCode
 └── scripts/
     ├── 01-install-gcloud.sh          # Google Cloud SDK + APIs
     ├── 02-install-claude-code.sh     # Claude Code + Vertex AI
     ├── 03-install-antigravity.sh     # Antigravity IDE + extensiones
-    ├── 04-setup-cowork-browsers.sh   # Cowork + Brave + Chrome
-    ├── 05-setup-mcp-integration.sh   # MCP (Antigravity <-> Claude Code)
-    └── open-claude-extension.sh      # Abre extensión Claude en navegadores
+    ├── 04-setup-cowork-browsers.sh   # Cowork + Brave + Chrome + MCP
+    ├── 05-setup-mcp-integration.sh   # MCP básico
+    ├── 06-fix-claude-desktop.sh      # Arregla errores de Claude Desktop
+    ├── 07-setup-all-mcp.sh           # TODOS los MCP servers
+    ├── 08-unified-ai-bridge.sh       # Memoria compartida entre IAs
+    ├── 09-sync-memory.sh             # Sincronizar memoria
+    ├── 10-setup-antigravity-full.sh  # Config completa de Antigravity
+    └── open-claude-extension.sh      # Abre extensión Claude
 ```
 
 ## Arquitectura de integración
@@ -192,7 +205,71 @@ Cuando Cowork está activo y la extensión Claude in Chrome está instalada, Cla
 - **Cuenta Anthropic**: Para Claude Code (o usar Vertex AI)
 - **Suscripción Claude Max**: Requerida para Cowork ($100-200/mes)
 
+## Multi-AI Integration (ChatGPT, Jules, OpenCode)
+
+Este proyecto permite usar múltiples IAs en conjunto via MCP:
+
+### ChatGPT / Codex
+```bash
+# Requiere suscripción ChatGPT Plus y API key
+# Configura en config/.env:
+OPENAI_API_KEY=sk-xxxxx
+```
+
+### Jules (Google AI Coding Agent)
+Jules se integra automáticamente con Antigravity. Para usarlo:
+1. Abre Antigravity: `agy .`
+2. Ctrl+Shift+J -> Abre Jules
+3. Asigna tareas asíncronas de código
+
+### OpenCode con Antigravity OAuth
+OpenCode puede usar los modelos de Antigravity (incluyendo Claude Opus 4.5):
+```bash
+# Instalar OpenCode
+npm install -g opencode
+
+# Usar con Antigravity OAuth (gratuito)
+opencode --provider antigravity
+```
+
+## Memoria Compartida entre IAs
+
+Todas las IAs comparten el mismo Knowledge Graph para contexto continuo:
+
+```
+~/.ai-shared-memory/
+├── knowledge-graph/
+│   └── shared-graph.json    <- Memoria persistente
+├── context/
+│   └── current-context.md   <- Contexto actual del proyecto
+├── conversations/
+└── backups/
+```
+
+### Comandos útiles
+```bash
+# Ver contexto actual
+ai-context
+
+# Sincronizar memoria
+ai-sync
+
+# Ver knowledge graph
+ai-memory
+```
+
 ## Solución de problemas
+
+### Claude Desktop no permite enviar prompts (error de archivos)
+```bash
+# Ejecutar script de limpieza
+bash scripts/06-fix-claude-desktop.sh
+```
+
+Este error ocurre por:
+- Archivos de lock residuales
+- Cache corrupta
+- Base de datos SQLite dañada
 
 ### `agy` no se encuentra en Linux
 ```bash
@@ -218,6 +295,18 @@ Brave soporta extensiones del Chrome Web Store, pero debes habilitarlo:
 
 ### Errores 429 (rate limit) en Claude Code
 Configura presupuestos y alertas en Google Cloud Console para evitar sorpresas con cuotas de Vertex AI.
+
+### MCP servers no se conectan
+```bash
+# Verificar que Node.js 18+ está instalado
+node -v
+
+# Reinstalar MCP servers
+bash scripts/07-setup-all-mcp.sh
+
+# Verificar configuración
+cat ~/.claude/mcp.json | jq .
+```
 
 ## Licencia
 

@@ -1,0 +1,241 @@
+{
+  "mcpServers": {
+    "// ===== MEMORIA Y PERSISTENCIA =====": {},
+    "memory": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"],
+      "env": {
+        "MEMORY_FILE": "${HOME}/.claude/memory/knowledge-graph.json"
+      }
+    },
+    "knowledge-graph": {
+      "command": "npx",
+      "args": ["-y", "mcp-knowledge-graph"],
+      "env": {
+        "GRAPH_PATH": "${HOME}/.claude/memory/graph.json"
+      }
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+    },
+
+    "// ===== GOOGLE CLOUD =====": {},
+    "firebase": {
+      "command": "npx",
+      "args": ["-y", "firebase-tools@latest", "experimental:mcp"],
+      "env": {
+        "FIREBASE_PROJECT": "${GCP_PROJECT_ID}"
+      }
+    },
+    "google-cloud-storage": {
+      "command": "npx",
+      "args": ["-y", "@anthropic-ai/mcp-server-gcs"],
+      "env": {
+        "GCP_PROJECT_ID": "${GCP_PROJECT_ID}",
+        "GCS_BUCKET": "${GCP_PROJECT_ID}-claudio-storage"
+      }
+    },
+    "google-drive": {
+      "command": "npx",
+      "args": ["-y", "@anthropic-ai/mcp-server-gdrive"],
+      "env": {
+        "GOOGLE_CLIENT_ID": "${GOOGLE_CLIENT_ID}",
+        "GOOGLE_CLIENT_SECRET": "${GOOGLE_CLIENT_SECRET}"
+      }
+    },
+    "google-calendar": {
+      "command": "npx",
+      "args": ["-y", "@anthropic-ai/mcp-server-google-calendar"],
+      "env": {
+        "GOOGLE_CLIENT_ID": "${GOOGLE_CLIENT_ID}",
+        "GOOGLE_CLIENT_SECRET": "${GOOGLE_CLIENT_SECRET}"
+      }
+    },
+    "bigquery": {
+      "command": "npx",
+      "args": ["-y", "@anthropic-ai/mcp-server-bigquery"],
+      "env": {
+        "GCP_PROJECT_ID": "${GCP_PROJECT_ID}"
+      }
+    },
+
+    "// ===== MULTI-AI (ChatGPT, Codex, Jules) =====": {},
+    "openai": {
+      "command": "npx",
+      "args": ["-y", "mcp-openai"],
+      "env": {
+        "OPENAI_API_KEY": "${OPENAI_API_KEY}"
+      }
+    },
+    "chatgpt": {
+      "command": "npx",
+      "args": ["-y", "claude-chatgpt-mcp"]
+    },
+    "codex-cli": {
+      "command": "npx",
+      "args": ["-y", "@anthropic-ai/mcp-server-codex"],
+      "env": {
+        "OPENAI_API_KEY": "${OPENAI_API_KEY}"
+      }
+    },
+    "jules": {
+      "command": "npx",
+      "args": ["-y", "jules-mcp-server"],
+      "env": {
+        "JULES_API_KEY": "${JULES_API_KEY}",
+        "GOOGLE_PROJECT_ID": "${GCP_PROJECT_ID}"
+      }
+    },
+
+    "// ===== PRODUCTIVIDAD =====": {},
+    "notion": {
+      "command": "npx",
+      "args": ["-y", "@notionhq/notion-mcp-server"],
+      "env": {
+        "OPENAPI_MCP_HEADERS": "{\"Authorization\": \"Bearer ${NOTION_TOKEN}\", \"Notion-Version\": \"2022-06-28\"}"
+      }
+    },
+    "slack": {
+      "command": "npx",
+      "args": ["-y", "@anthropic-ai/mcp-server-slack"],
+      "env": {
+        "SLACK_BOT_TOKEN": "${SLACK_BOT_TOKEN}",
+        "SLACK_TEAM_ID": "${SLACK_TEAM_ID}"
+      }
+    },
+    "linear": {
+      "command": "npx",
+      "args": ["-y", "@anthropic-ai/mcp-server-linear"],
+      "env": {
+        "LINEAR_API_KEY": "${LINEAR_API_KEY}"
+      }
+    },
+    "asana": {
+      "command": "npx",
+      "args": ["-y", "@anthropic-ai/mcp-server-asana"],
+      "env": {
+        "ASANA_ACCESS_TOKEN": "${ASANA_ACCESS_TOKEN}"
+      }
+    },
+
+    "// ===== AUTOMATIZACIÓN =====": {},
+    "zapier": {
+      "command": "npx",
+      "args": ["-y", "@anthropic-ai/mcp-server-zapier"],
+      "env": {
+        "ZAPIER_API_KEY": "${ZAPIER_API_KEY}"
+      }
+    },
+    "n8n": {
+      "command": "npx",
+      "args": ["-y", "n8n-mcp-server"],
+      "env": {
+        "N8N_API_URL": "${N8N_API_URL}",
+        "N8N_API_KEY": "${N8N_API_KEY}"
+      }
+    },
+
+    "// ===== DESARROLLO =====": {},
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@anthropic-ai/mcp-server-github"],
+      "env": {
+        "GITHUB_TOKEN": "${GITHUB_TOKEN}"
+      }
+    },
+    "gitlab": {
+      "command": "npx",
+      "args": ["-y", "@anthropic-ai/mcp-server-gitlab"],
+      "env": {
+        "GITLAB_TOKEN": "${GITLAB_TOKEN}"
+      }
+    },
+    "vercel": {
+      "command": "npx",
+      "args": ["-y", "@anthropic-ai/mcp-server-vercel"],
+      "env": {
+        "VERCEL_TOKEN": "${VERCEL_TOKEN}"
+      }
+    },
+    "docker": {
+      "command": "npx",
+      "args": ["-y", "@anthropic-ai/mcp-server-docker"]
+    },
+
+    "// ===== BASES DE DATOS =====": {},
+    "postgres": {
+      "command": "npx",
+      "args": ["-y", "@anthropic-ai/mcp-server-postgres"],
+      "env": {
+        "POSTGRES_CONNECTION_STRING": "${POSTGRES_CONNECTION_STRING}"
+      }
+    },
+    "supabase": {
+      "command": "npx",
+      "args": ["-y", "@anthropic-ai/mcp-server-supabase"],
+      "env": {
+        "SUPABASE_URL": "${SUPABASE_URL}",
+        "SUPABASE_KEY": "${SUPABASE_KEY}"
+      }
+    },
+    "redis": {
+      "command": "npx",
+      "args": ["-y", "@anthropic-ai/mcp-server-redis"],
+      "env": {
+        "REDIS_URL": "${REDIS_URL}"
+      }
+    },
+
+    "// ===== ARCHIVOS Y BÚSQUEDA =====": {},
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@anthropic-ai/mcp-server-filesystem", "/home/user/claudio", "/home/user"]
+    },
+    "brave-search": {
+      "command": "npx",
+      "args": ["-y", "@anthropic-ai/mcp-server-brave-search"],
+      "env": {
+        "BRAVE_API_KEY": "${BRAVE_API_KEY}"
+      }
+    },
+    "exa": {
+      "command": "npx",
+      "args": ["-y", "@anthropic-ai/mcp-server-exa"],
+      "env": {
+        "EXA_API_KEY": "${EXA_API_KEY}"
+      }
+    },
+
+    "// ===== PAGOS =====": {},
+    "stripe": {
+      "command": "npx",
+      "args": ["-y", "@anthropic-ai/mcp-server-stripe"],
+      "env": {
+        "STRIPE_API_KEY": "${STRIPE_API_KEY}"
+      }
+    },
+    "paypal": {
+      "command": "npx",
+      "args": ["-y", "@anthropic-ai/mcp-server-paypal"],
+      "env": {
+        "PAYPAL_CLIENT_ID": "${PAYPAL_CLIENT_ID}",
+        "PAYPAL_CLIENT_SECRET": "${PAYPAL_CLIENT_SECRET}"
+      }
+    },
+
+    "// ===== UTILIDADES =====": {},
+    "time": {
+      "command": "npx",
+      "args": ["-y", "@anthropic-ai/mcp-server-time"]
+    },
+    "fetch": {
+      "command": "npx",
+      "args": ["-y", "@anthropic-ai/mcp-server-fetch"]
+    },
+    "puppeteer": {
+      "command": "npx",
+      "args": ["-y", "@anthropic-ai/mcp-server-puppeteer"]
+    }
+  }
+}

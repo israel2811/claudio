@@ -1,0 +1,118 @@
+{
+  "mcp": {
+    "// NOTA: OpenCode usa formato diferente a Claude Code": {},
+    "// command es un array, y requiere type: local": {},
+
+    "memory": {
+      "type": "local",
+      "command": ["npx", "-y", "@modelcontextprotocol/server-memory"],
+      "enabled": true,
+      "env": {
+        "MEMORY_FILE": "${HOME}/.opencode/memory/knowledge-graph.json"
+      }
+    },
+    "knowledge-graph": {
+      "type": "local",
+      "command": ["npx", "-y", "mcp-knowledge-graph"],
+      "enabled": true,
+      "env": {
+        "GRAPH_PATH": "${HOME}/.opencode/memory/graph.json"
+      }
+    },
+    "sequential-thinking": {
+      "type": "local",
+      "command": ["npx", "-y", "@modelcontextprotocol/server-sequential-thinking"],
+      "enabled": true
+    },
+
+    "firebase": {
+      "type": "local",
+      "command": ["npx", "-y", "firebase-tools@latest", "experimental:mcp"],
+      "enabled": true,
+      "env": {
+        "FIREBASE_PROJECT": "${GCP_PROJECT_ID}"
+      }
+    },
+    "google-cloud-storage": {
+      "type": "local",
+      "command": ["npx", "-y", "@anthropic-ai/mcp-server-gcs"],
+      "enabled": true,
+      "env": {
+        "GCP_PROJECT_ID": "${GCP_PROJECT_ID}",
+        "GCS_BUCKET": "${GCP_PROJECT_ID}-claudio-storage"
+      }
+    },
+
+    "jules": {
+      "type": "local",
+      "command": ["npx", "-y", "jules-mcp-server"],
+      "enabled": true,
+      "env": {
+        "JULES_API_KEY": "${JULES_API_KEY}",
+        "GOOGLE_PROJECT_ID": "${GCP_PROJECT_ID}"
+      }
+    },
+
+    "notion": {
+      "type": "local",
+      "command": ["npx", "-y", "@notionhq/notion-mcp-server"],
+      "enabled": true,
+      "env": {
+        "OPENAPI_MCP_HEADERS": "{\"Authorization\": \"Bearer ${NOTION_TOKEN}\", \"Notion-Version\": \"2022-06-28\"}"
+      }
+    },
+
+    "github": {
+      "type": "local",
+      "command": ["npx", "-y", "@anthropic-ai/mcp-server-github"],
+      "enabled": true,
+      "env": {
+        "GITHUB_TOKEN": "${GITHUB_TOKEN}"
+      }
+    },
+    "vercel": {
+      "type": "local",
+      "command": ["npx", "-y", "@anthropic-ai/mcp-server-vercel"],
+      "enabled": true,
+      "env": {
+        "VERCEL_TOKEN": "${VERCEL_TOKEN}"
+      }
+    },
+
+    "zapier": {
+      "type": "local",
+      "command": ["npx", "-y", "@anthropic-ai/mcp-server-zapier"],
+      "enabled": true,
+      "env": {
+        "ZAPIER_API_KEY": "${ZAPIER_API_KEY}"
+      }
+    },
+
+    "supabase": {
+      "type": "local",
+      "command": ["npx", "-y", "@anthropic-ai/mcp-server-supabase"],
+      "enabled": true,
+      "env": {
+        "SUPABASE_URL": "${SUPABASE_URL}",
+        "SUPABASE_KEY": "${SUPABASE_KEY}"
+      }
+    },
+
+    "filesystem": {
+      "type": "local",
+      "command": ["npx", "-y", "@anthropic-ai/mcp-server-filesystem", "/home/user/claudio", "/home/user"],
+      "enabled": true
+    },
+
+    "time": {
+      "type": "local",
+      "command": ["npx", "-y", "@anthropic-ai/mcp-server-time"],
+      "enabled": true
+    },
+    "fetch": {
+      "type": "local",
+      "command": ["npx", "-y", "@anthropic-ai/mcp-server-fetch"],
+      "enabled": true
+    }
+  }
+}

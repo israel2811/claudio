@@ -260,7 +260,84 @@ POLICY
 done
 
 # ============================================================================
-# 6. Resumen
+# 6. Configurar MCP para Claude Desktop (Cowork)
+# ============================================================================
+header "CONFIGURANDO MCP PARA COWORK"
+
+CLAUDE_DESKTOP_CONFIG=""
+if [[ -d "$HOME/Library/Application Support/Claude" ]]; then
+    CLAUDE_DESKTOP_CONFIG="$HOME/Library/Application Support/Claude/claude_desktop_config.json"
+else
+    CLAUDE_DESKTOP_CONFIG="$HOME/.config/Claude/claude_desktop_config.json"
+fi
+
+mkdir -p "$(dirname "$CLAUDE_DESKTOP_CONFIG")"
+mkdir -p "$HOME/.config/Claude/memory"
+
+# Solo crear si no existe o está vacío
+if [[ ! -s "$CLAUDE_DESKTOP_CONFIG" ]]; then
+    cat > "$CLAUDE_DESKTOP_CONFIG" << MCPEOF
+{
+    "mcpServers": {
+        "memory": {
+            "command": "npx",
+            "args": ["-y", "@modelcontextprotocol/server-memory"],
+            "env": {
+                "MEMORY_FILE": "$HOME/.config/Claude/memory/knowledge-graph.json"
+            }
+        },
+        "firebase": {
+            "command": "npx",
+            "args": ["-y", "firebase-tools@latest", "experimental:mcp"],
+            "env": {
+                "FIREBASE_PROJECT": "${GCP_PROJECT_ID:-YOUR_PROJECT}"
+            }
+        },
+        "filesystem": {
+            "command": "npx",
+            "args": ["-y", "@anthropic-ai/mcp-server-filesystem", "/home/user/claudio", "$HOME"]
+        },
+        "notion": {
+            "command": "npx",
+            "args": ["-y", "@notionhq/notion-mcp-server"]
+        },
+        "time": {
+            "command": "npx",
+            "args": ["-y", "@anthropic-ai/mcp-server-time"]
+        },
+        "fetch": {
+            "command": "npx",
+            "args": ["-y", "@anthropic-ai/mcp-server-fetch"]
+        },
+        "puppeteer": {
+            "command": "npx",
+            "args": ["-y", "@anthropic-ai/mcp-server-puppeteer"]
+        }
+    },
+    "globalShortcut": "Ctrl+Shift+Space"
+}
+MCPEOF
+    info "Configuración MCP de Cowork creada"
+else
+    info "Configuración MCP de Cowork ya existe"
+fi
+
+# ============================================================================
+# 7. Instrucciones para extensión en Antigravity browser
+# ============================================================================
+header "EXTENSIÓN CLAUDE EN ANTIGRAVITY BROWSER"
+
+info ""
+info "Antigravity tiene su propio navegador integrado para testing."
+info "Para usar Claude en el browser de Antigravity:"
+info ""
+info "  1. En Antigravity, abre un agente con browser"
+info "  2. El agente puede usar Puppeteer MCP para automation"
+info "  3. Para testing manual: Ctrl+Shift+B abre el browser"
+info ""
+
+# ============================================================================
+# 8. Resumen
 # ============================================================================
 header "RESUMEN"
 echo ""
@@ -268,5 +345,13 @@ info "Chrome:    ${CHROME_BIN:-'No instalado'}"
 info "Brave:     ${BRAVE_BIN:-'No instalado'}"
 info "Cowork:    Requiere Claude Desktop App + Claude Max"
 info "Extensión: Instalar manualmente desde Chrome Web Store"
+info "MCP:       $CLAUDE_DESKTOP_CONFIG"
+echo ""
+info "Servidores MCP configurados para Cowork:"
+echo "  - memory (persistencia)"
+echo "  - firebase (Google Cloud)"
+echo "  - filesystem (archivos locales)"
+echo "  - notion (productividad)"
+echo "  - puppeteer (browser automation)"
 echo ""
 info "Configuración de navegadores y Cowork completada."
