@@ -1,0 +1,20 @@
+{
+    "mcpServers": {
+        "firebase": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "firebase-tools@latest",
+                "experimental:mcp"
+            ]
+        },
+        "filesystem": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@anthropic-ai/mcp-server-filesystem",
+                "/home/user/claudio"
+            ]
+        }
+    }
+}

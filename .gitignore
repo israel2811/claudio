@@ -1,0 +1,24 @@
+# Secretos y variables locales
+config/.env
+!config/.env.example
+
+# Node
+node_modules/
+.npm/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Google Cloud
+.gcloud/
+application_default_credentials.json
+
+# Logs
+*.log
