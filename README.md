@@ -13,22 +13,37 @@ Configuración local de desarrollo integrado con servicios de Google Cloud, comb
 | **Claude in Chrome** | Extensión de navegador | Chrome + Brave |
 | **Servidores MCP** | Protocolo de contexto compartido | Firebase, GCS, GitHub |
 
-## Instalación rápida
+## Instalacion rapida (Quick Setup)
 
 ```bash
-# 1. Clona el repositorio
+# Opcion 1: Setup rapido (solo Claude Code + Cowork)
+bash scripts/quick-setup.sh
+
+# Opcion 2: Instalacion completa con Google Cloud
 git clone https://github.com/israel2811/claudio.git
 cd claudio
-
-# 2. Configura tus variables de entorno
 cp config/.env.example config/.env
-# Edita config/.env con tu GCP_PROJECT_ID
-
-# 3. Ejecuta el instalador
 bash setup.sh
 ```
 
-El script `setup.sh` ofrece un menú interactivo para instalar todo junto o componentes individuales.
+### Usar Claude Code inmediatamente
+
+```bash
+# Ejecuta en cualquier terminal:
+claude
+
+# Primera vez: se abrira tu navegador para autenticarte
+# Luego podras escribir tus prompts
+```
+
+### Usar Cowork en el navegador
+
+1. Ve a **https://claude.ai**
+2. Inicia sesion con tu cuenta
+3. Haz clic en el icono de **llave inglesa** (esquina superior derecha)
+4. O visita directamente: **https://claude.ai/code**
+
+> **Nota:** Cowork requiere suscripcion Claude Max ($100-200/mes)
 
 ## Instalación por componentes
 
@@ -192,7 +207,20 @@ Cuando Cowork está activo y la extensión Claude in Chrome está instalada, Cla
 - **Cuenta Anthropic**: Para Claude Code (o usar Vertex AI)
 - **Suscripción Claude Max**: Requerida para Cowork ($100-200/mes)
 
-## Solución de problemas
+## Solucion de problemas
+
+> Ver documentacion completa en [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)
+
+### No puedo ingresar prompts en Claude Code
+```bash
+# 1. Cierra y abre una nueva terminal
+# 2. Ejecuta:
+claude logout
+claude login
+
+# 3. Se abrira tu navegador para autenticarte
+# 4. Ahora podras escribir prompts
+```
 
 ### `agy` no se encuentra en Linux
 ```bash
