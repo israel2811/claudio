@@ -63,9 +63,12 @@ echo "  3) Solo Claude Code CLI + Vertex AI"
 echo "  4) Solo Google Antigravity"
 echo "  5) Solo Cowork + Navegadores (Brave/Chrome)"
 echo "  6) Solo integraciones MCP"
+echo "  7) Solo herramientas de IA (Codex CLI, gh, accesos ChatGPT/Perplexity)"
+echo "  8) Solo Google Drive (rclone)"
+echo "  9) Solo revisión de conectores de cuenta (Drive/GitHub/Notion/Linear)"
 echo "  0) Salir"
 echo ""
-read -rp "Selecciona una opción [1-6, 0]: " CHOICE
+read -rp "Selecciona una opción [1-9, 0]: " CHOICE
 
 run_script() {
     local script="$1"
@@ -88,12 +91,18 @@ case "$CHOICE" in
         run_script "$SCRIPTS_DIR/03-install-antigravity.sh"     "Google Antigravity"
         run_script "$SCRIPTS_DIR/04-setup-cowork-browsers.sh"   "Cowork + Navegadores"
         run_script "$SCRIPTS_DIR/05-setup-mcp-integration.sh"   "Integraciones MCP"
+        run_script "$SCRIPTS_DIR/06-install-ai-tools.sh"        "Herramientas de IA adicionales"
+        run_script "$SCRIPTS_DIR/07-install-google-drive.sh"    "Google Drive (rclone)"
+        run_script "$SCRIPTS_DIR/08-setup-connectors.sh"        "Revisión de conectores de cuenta"
         ;;
     2) run_script "$SCRIPTS_DIR/01-install-gcloud.sh"           "Google Cloud SDK" ;;
     3) run_script "$SCRIPTS_DIR/02-install-claude-code.sh"      "Claude Code CLI + Vertex AI" ;;
     4) run_script "$SCRIPTS_DIR/03-install-antigravity.sh"      "Google Antigravity" ;;
     5) run_script "$SCRIPTS_DIR/04-setup-cowork-browsers.sh"    "Cowork + Navegadores" ;;
     6) run_script "$SCRIPTS_DIR/05-setup-mcp-integration.sh"    "Integraciones MCP" ;;
+    7) run_script "$SCRIPTS_DIR/06-install-ai-tools.sh"         "Herramientas de IA adicionales" ;;
+    8) run_script "$SCRIPTS_DIR/07-install-google-drive.sh"     "Google Drive (rclone)" ;;
+    9) run_script "$SCRIPTS_DIR/08-setup-connectors.sh"         "Revisión de conectores de cuenta" ;;
     0) info "Saliendo."; exit 0 ;;
     *) error "Opción inválida: $CHOICE" ;;
 esac
@@ -124,6 +133,9 @@ check_tool "Google Chrome"      "google-chrome"
 check_tool "Brave Browser"      "brave-browser"
 check_tool "Node.js"            "node"
 check_tool "npm"                "npm"
+check_tool "Codex CLI"          "codex"
+check_tool "GitHub CLI"         "gh"
+check_tool "rclone"             "rclone"
 
 echo ""
 echo -e "${BOLD}Archivos de configuración:${NC}"

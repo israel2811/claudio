@@ -47,6 +47,15 @@ bash scripts/04-setup-cowork-browsers.sh
 
 # Solo integraciones MCP
 bash scripts/05-setup-mcp-integration.sh
+
+# Solo herramientas de IA adicionales (Codex CLI, gh, accesos ChatGPT/Perplexity)
+bash scripts/06-install-ai-tools.sh
+
+# Solo Google Drive (rclone)
+bash scripts/07-install-google-drive.sh
+
+# Solo revisión de conectores de cuenta (Drive/GitHub/Notion/Linear)
+bash scripts/08-setup-connectors.sh
 ```
 
 ## Estructura del proyecto
@@ -66,6 +75,9 @@ claudio/
     ├── 03-install-antigravity.sh     # Antigravity IDE + extensiones
     ├── 04-setup-cowork-browsers.sh   # Cowork + Brave + Chrome
     ├── 05-setup-mcp-integration.sh   # MCP (Antigravity <-> Claude Code)
+    ├── 06-install-ai-tools.sh        # Codex CLI, gh CLI, accesos ChatGPT/Perplexity
+    ├── 07-install-google-drive.sh    # Google Drive vía rclone
+    ├── 08-setup-connectors.sh        # Revisión de conectores de cuenta Claude
     └── open-claude-extension.sh      # Abre extensión Claude en navegadores
 ```
 
@@ -191,6 +203,87 @@ Cuando Cowork está activo y la extensión Claude in Chrome está instalada, Cla
 - **Cuenta Google Cloud**: Con billing habilitado
 - **Cuenta Anthropic**: Para Claude Code (o usar Vertex AI)
 - **Suscripción Claude Max**: Requerida para Cowork ($100-200/mes)
+
+## Entornos de Claude Code y cómo compartir contexto entre laptops
+
+Claude Code puede correr en cuatro tipos de entorno, y **la elección determina dónde
+se ejecuta el trabajo y qué tiene acceso a qué**:
+
+| Entorno | Dónde corre | Acceso a archivos |
+|---|---|---|
+| **Local** | Tu laptop | Directo, a tus archivos locales |
+| **Cloud** | Infraestructura de Anthropic | A un repo de GitHub (no a tu disco local) |
+| **SSH** | Un servidor remoto tuyo (VM, dev container) | Al filesystem de esa máquina |
+| **WSL** | Distribución Linux dentro de Windows | Al filesystem de esa distro |
+
+Esta sesión corre en modo **Cloud**, dentro de un contenedor aislado y efímero
+ligado a `israel2811/claudio`. Por eso no tiene control sobre tu laptop física,
+tu navegador local ni puede instalar apps de escritorio (ChatGPT, Antigravity,
+Google Drive, etc.) en tus máquinas — solo puede editar este repositorio y
+usar los conectores de tu cuenta.
+
+### Cómo tener "lo mismo" en varias laptops sin reinstalar todo cada vez
+
+1. **Conectores de cuenta (la parte fácil).** Notion, Linear, Google Drive,
+   GitHub, Slack, etc. no se instalan por laptop: se activan una vez en
+   `claude.ai/settings/connectors` con tu cuenta
+   (israel.realivazquez2811@gmail.com) y quedan disponibles automáticamente
+   en cualquier entorno (Local/Cloud/SSH/WSL) donde inicies sesión. No hay
+   nada que sincronizar manualmente aquí.
+2. **Config y scripts (este repo).** `setup.sh` y `scripts/*.sh` ya están en
+   Git — en cada laptop nueva: `git clone` + `bash setup.sh`. Cualquier
+   ajuste que quieras que persista en todas las máquinas, hazlo aquí y haz
+   `git pull` en las demás.
+3. **Dotfiles de Claude Code (`~/.claude/`).** Si quieres que `settings.json`,
+   memorias o comandos personalizados viajen entre laptops, mantenlos en un
+   repo de dotfiles aparte (o symlinkeados a una carpeta de este repo) y
+   clónalo/pulléalo en cada máquina. Los conectores y el historial de
+   sesiones en la nube ya viven en tu cuenta, no en ese archivo.
+4. **Continuidad real entre dispositivos: usa Cloud.** Una sesión Cloud (como
+   esta) no depende de que una laptop específica esté encendida — puedes
+   abrirla desde `claude.ai/code` en cualquier equipo o desde la app móvil y
+   seguir donde quedó.
+
+### Qué NO puede hacerse desde aquí (límites reales, no configurables)
+
+- No puedo instalar apps de escritorio (ChatGPT, Antigravity, Google Drive,
+  Perplexity) en tu laptop física desde esta sesión Cloud — eso corre en tu
+  máquina, yo corro en un contenedor separado. Lo que sí dejé listo son los
+  scripts `06`, `07` y `08` para que TÚ (o una sesión **Local** de Claude
+  Code en esa laptop) los ejecutes ahí.
+- No tengo acceso a tus conversaciones con ChatGPT, Codex, Gemini, Jules ni
+  Antigravity — no hay ningún conector que exponga ese historial. Si quieres
+  que las use como contexto, expórtalas y súbelas a Google Drive/Notion (ya
+  conectados) o pégalas directamente en el chat.
+- **Replit** no tiene hoy un conector MCP nativo en Claude — la vía práctica
+  es su integración con GitHub (push/pull sobre este mismo repo).
+  **GitHub Codespaces** y **Google Colab** tampoco son "conectores": son
+  entornos de ejecución que se controlan desde su propia UI/API, no algo que
+  se activa vía claude.ai/settings/connectors.
+- No hay canal de "control remoto" de tu PC o navegador local desde una
+  sesión Cloud. Si quieres que Claude controle un navegador o tu PC
+  directamente, eso requiere una sesión **Local** de Claude Code (o Cowork)
+  corriendo en esa misma máquina.
+
+### Estado verificado de conectores en tu cuenta (a la fecha de esta sesión)
+
+Conectados y activos: Google Drive, Notion, Linear, Dropbox, Figma, Gmail,
+Google Calendar, Supabase, Vercel, Zapier, Slack (instalado, revisa que esté
+habilitado en el chat que uses). GitHub se maneja aparte, por repositorio,
+en `claude.ai/code` → Sources. No aparece un conector nativo para Replit,
+ChatGPT, Codex, Perplexity ni Antigravity — no son integraciones de Claude.
+
+### Recomendaciones adicionales (dado tu stack: multi-IA + GCP + dev local)
+
+- **gh** (GitHub CLI) — ya lo agrega `scripts/06-install-ai-tools.sh`.
+- **rclone** — para Google Drive por CLI/montaje (`scripts/07`).
+- **direnv** o **mise/asdf** — para no arrastrar variables de entorno y
+  versiones de Node/Python distintas entre proyectos.
+- **1Password CLI** o **Bitwarden CLI** — mejor que tener `GITHUB_TOKEN` y
+  llaves sueltas en `config/.env`.
+- **Tailscale** — si de verdad quieres que una laptop alcance a otra (por
+  ejemplo, para que una sesión SSH de Claude Code llegue a tu máquina de
+  casa), es la forma segura de exponerla sin abrir puertos a internet.
 
 ## Solución de problemas
 
